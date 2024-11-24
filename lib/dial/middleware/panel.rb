@@ -5,7 +5,7 @@ require "uri"
 module Dial
   class Panel
     class << self
-      def html env, profile_out_filename, ruby_vm_stat, gc_stat, gc_stat_heap, server_timing
+      def html env, profile_out_filename, query_logs, ruby_vm_stat, gc_stat, gc_stat_heap, server_timing
         <<~HTML
           <style>#{style}</style>
 
@@ -28,6 +28,13 @@ module Dial
                 <summary>Server timing</summary>
                 <div class="section">
                   #{formatted_server_timing server_timing}
+                </div>
+              </details>
+
+              <details>
+                <summary>N+1s</summary>
+                <div class="section query-logs">
+                  #{formatted_query_logs query_logs}
                 </div>
               </details>
 
@@ -90,6 +97,14 @@ module Dial
               display: flex;
               flex-direction: column;
               margin: 0.25rem 0 0 0;
+            }
+
+            .query-logs {
+              padding-left: 0.75rem;
+
+              details {
+                margin-top: 0;
+              }
             }
 
             span {
@@ -169,6 +184,20 @@ module Dial
         else
           "NA"
         end
+      end
+
+      def formatted_query_logs query_logs
+        query_logs.map do |(queries, stack_lines)|
+          <<~HTML
+            <details>
+              <summary>#{queries.shift}</summary>
+              <div class="section query-logs">
+                #{queries.map { |query| "<span>#{query}</span>" }.join}
+                #{stack_lines.map { |stack_line| "<span>#{stack_line}</span>" }.join}
+              </div>
+            </details>
+          HTML
+        end.join
       end
 
       def formatted_ruby_vm_stat ruby_vm_stat

@@ -23,4 +23,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency "activerecord", ">= 7", "< 8.2"
   spec.add_dependency "actionpack", ">= 7", "< 8.2"
   spec.add_dependency "vernier", "~> 1.3"
+  spec.add_dependency "prosopite", "~> 1.4"
+  spec.add_dependency "pg_query", "~> 5.1"
 end
