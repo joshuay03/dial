@@ -93,36 +93,38 @@ module Dial
     def clear_query_logs!
       [].tap do |query_logs|
         File.open(query_log_pathname, "r+") do |file|
-          entry = reading_section = query_count = nil
+          entry = section = count = nil
           file.each_line do |line|
-            case line
-            when /N\+1 queries detected/
-              entry = [[], []]
-              reading_section = :queries
-              query_count = 0
-            when /Call stack/
-              reading_section = :call_stack
-              if query_count > 5
-                entry.first << "+ #{query_count - 5} more queries"
-              end
-            else
-              case reading_section
-              when :queries
-                query_count += 1
-                entry.first << line.strip if query_count <= 5
-              when :call_stack
-                if line.strip.empty?
-                  query_logs << entry
-                  reading_section = nil
-                else
-                  entry.last << line.strip
-                end
-              end
-            end
+            entry, section, count = process_query_log_line line, entry, section, count
+            query_logs << entry if section.nil?
           end
 
           file.truncate 0
           file.rewind
+        end
+      end
+    end
+
+    def process_query_log_line line, entry, section, count
+      case line
+      when /N\+1 queries detected/
+        [[[],[]], :queries, 0]
+      when /Call stack/
+        entry.first << "+ #{count - 5} more queries" if count > 5
+        [entry, :call_stack, count]
+      else
+        case section
+        when :queries
+          count += 1
+          entry.first << line.strip if count <= 5
+          [entry, :queries, count]
+        when :call_stack
+          if line.strip.empty?
+            [entry, nil, count]
+          else
+            entry.last << line.strip
+            [entry, section, count]
+          end
         end
       end
     end
