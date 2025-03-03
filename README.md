@@ -39,11 +39,20 @@ mount Dial::Engine, at: "/" if Rails.env.development?
 # config/initializers/dial.rb
 
 Dial.configure do |config|
-  config.vernier_interval = 100 # default: 200
-  config.vernier_allocation_interval = 10_000 # default: 20_000
-  config.prosopite_ignore_queries += [/pg_sleep/i] # default: [/schema_migrations/i]
+  config.vernier_interval = 100
+  config.vernier_allocation_interval = 10_000
+  config.prosopite_ignore_queries += [/pg_sleep/i]
 end
 ```
+
+### Options
+
+Option | Description | Default
+- | - | -
+`vernier_interval` | Sets the `interval` option for vernier. | `200`
+`vernier_allocation_interval` | Sets the `allocation_interval` option for vernier. | `20_000`
+`prosopite_ignore_queries` | Sets the `ignore_queries` option for prosopite. | `[/schema_migrations/i]`
+`content_security_policy_nonce` | Sets the content security policy nonce to use when inserting Dial's script. Can be a string, or a Proc which receives `env` and response `headers` as arguments and returns the nonce. | Rails generated nonce or `nil`
 
 ## Development
 

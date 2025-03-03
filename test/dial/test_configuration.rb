@@ -19,6 +19,9 @@ module Dial
         assert_equal VERNIER_INTERVAL, config.vernier_interval
         assert_equal VERNIER_ALLOCATION_INTERVAL, config.vernier_allocation_interval
         assert_equal PROSOPITE_IGNORE_QUERIES, config.prosopite_ignore_queries
+        assert_instance_of Proc, config.content_security_policy_nonce
+        assert_equal (nonce = SecureRandom.base64(16)), config.content_security_policy_nonce.call({ NONCE => nonce }, {})
+        assert_equal "", config.content_security_policy_nonce.call({}, {})
       end
     end
 
@@ -27,10 +30,12 @@ module Dial
         config.vernier_interval = 50
         config.vernier_allocation_interval = 100
         config.prosopite_ignore_queries = [/only_ignore_me/]
+        config.content_security_policy_nonce = lambda { |_env, headers| headers["TEST_NONCE"] }
 
         assert_equal 50, config.vernier_interval
         assert_equal 100, config.vernier_allocation_interval
         assert_equal [/only_ignore_me/], config.prosopite_ignore_queries
+        assert_equal "test_nonce", config.content_security_policy_nonce.call({}, { "TEST_NONCE" => "test_nonce" })
       end
     end
   end

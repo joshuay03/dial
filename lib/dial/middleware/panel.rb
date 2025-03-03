@@ -5,7 +5,7 @@ require "uri"
 module Dial
   class Panel
     class << self
-      def html env, profile_out_filename, query_logs, ruby_vm_stat, gc_stat, gc_stat_heap, server_timing
+      def html env, headers, profile_out_filename, query_logs, ruby_vm_stat, gc_stat, gc_stat_heap, server_timing
         <<~HTML
           <style>#{style}</style>
 
@@ -69,7 +69,9 @@ module Dial
             </div>
           </div>
 
-          <script>#{script}</script>
+          <script nonce="#{configured_nonce env, headers}">
+            #{script}
+          </script>
         HTML
       end
 
@@ -252,6 +254,15 @@ module Dial
             </div>
           HTML
         end.join
+      end
+
+      def configured_nonce env, headers
+        config_nonce = Dial._configuration.content_security_policy_nonce
+        if config_nonce.instance_of? Proc
+          config_nonce.call env, headers
+        else
+          config_nonce
+        end
       end
     end
   end

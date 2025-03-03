@@ -15,6 +15,7 @@ module Dial
         vernier_interval: VERNIER_INTERVAL,
         vernier_allocation_interval: VERNIER_ALLOCATION_INTERVAL,
         prosopite_ignore_queries: PROSOPITE_IGNORE_QUERIES,
+        content_security_policy_nonce: -> (env, _headers) { env[NONCE] || "" },
       }
 
       @options.keys.each do |key|

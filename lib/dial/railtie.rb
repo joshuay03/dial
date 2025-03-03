@@ -48,7 +48,6 @@ module Dial
       app.config.after_initialize do
         Dial._configuration.freeze
 
-        # set static configuration options
         ::Prosopite.ignore_queries = Dial._configuration.prosopite_ignore_queries
       end
     end

@@ -53,7 +53,7 @@ module Dial
         rack_body.close if rack_body.respond_to? :close
 
         str.sub! "</body>", <<~HTML
-            #{Panel.html env, profile_out_filename, query_logs, ruby_vm_stat, gc_stat, gc_stat_heap, server_timing}
+            #{Panel.html env, headers, profile_out_filename, query_logs, ruby_vm_stat, gc_stat, gc_stat_heap, server_timing}
           </body>
         HTML
       end

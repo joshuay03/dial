@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "rack"
+require "action_dispatch"
 
 require_relative "version"
 
@@ -10,6 +11,7 @@ module Dial
   HTTP_ACCEPT = "HTTP_ACCEPT"
   CONTENT_TYPE = ::Rack::CONTENT_TYPE
   CONTENT_LENGTH = ::Rack::CONTENT_LENGTH
+  NONCE = ::ActionDispatch::ContentSecurityPolicy::Request::NONCE
   REQUEST_TIMING = "dial_request_timing"
 
   FILE_STALE_SECONDS = 60 * 60

@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- Add configuration option for setting script CSP nonce (thanks @matthaigh27)
+
 ## [0.2.3] - 2025-02-28
 
 - Add configuration API
