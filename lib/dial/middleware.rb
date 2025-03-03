@@ -51,10 +51,12 @@ module Dial
       body = String.new.tap do |str|
         rack_body.each { |chunk| str << chunk }
         rack_body.close if rack_body.respond_to? :close
-      end.sub "</body>", <<~HTML
-          #{Panel.html env, profile_out_filename, query_logs, ruby_vm_stat, gc_stat, gc_stat_heap, server_timing}
-        </body>
-      HTML
+
+        str.sub! "</body>", <<~HTML
+            #{Panel.html env, profile_out_filename, query_logs, ruby_vm_stat, gc_stat, gc_stat_heap, server_timing}
+          </body>
+        HTML
+      end
 
       headers[CONTENT_LENGTH] = body.bytesize.to_s
 
