@@ -7,6 +7,8 @@ WIP
 
 A modern profiler for Rails applications.
 
+Utilizes [vernier](https://github.com/jhawthorn/vernier) for profiling and [prosopite](https://github.com/charkost/prosopite) for N+1 query detection.
+
 Check out the demo:
 [![Demo](https://img.youtube.com/vi/LPXtfJ0c284/maxresdefault.jpg)](https://youtu.be/LPXtfJ0c284)
 
