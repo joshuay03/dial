@@ -19,6 +19,7 @@ module Dial
   VERNIER_INTERVAL = 200
   VERNIER_ALLOCATION_INTERVAL = 20_000
   VERNIER_PROFILE_OUT_RELATIVE_DIRNAME = "tmp/dial/profiles"
+  VERNIER_VIEWER_URL = "https://vernier.prof"
 
   PROSOPITE_IGNORE_QUERIES = [/schema_migrations/i].freeze
   PROSOPITE_LOG_RELATIVE_DIRNAME = "log/dial"

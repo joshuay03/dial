@@ -9,7 +9,7 @@ Dial::Engine.routes.draw do
       if File.exist? path
         [
           200,
-          { "Content-Type" => "application/json", "Access-Control-Allow-Origin" => "https://vernier.prof" },
+          { "Content-Type" => "application/json", "Access-Control-Allow-Origin" => Dial::VERNIER_VIEWER_URL },
           [File.read(path)]
         ]
       else
