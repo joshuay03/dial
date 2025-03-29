@@ -7,7 +7,12 @@ WIP
 
 A modern profiler for Rails applications.
 
-Utilizes [vernier](https://github.com/jhawthorn/vernier) for profiling and [prosopite](https://github.com/charkost/prosopite) for N+1 query detection.
+Utilizes [vernier](https://github.com/jhawthorn/vernier) for profiling and
+[prosopite](https://github.com/charkost/prosopite) for N+1 query detection.
+
+> [!NOTE]
+> Check out the resources in the [Vernier](https://github.com/jhawthorn/vernier) project for more information on how to
+> interpret the viewer, as well as comparisons with other profilers, including `stackprof`.
 
 Check out the demo:
 [![Demo](https://img.youtube.com/vi/LPXtfJ0c284/maxresdefault.jpg)](https://youtu.be/LPXtfJ0c284)
@@ -55,6 +60,25 @@ Option | Description | Default
 `vernier_allocation_interval` | Sets the `allocation_interval` option for vernier. | `20_000`
 `prosopite_ignore_queries` | Sets the `ignore_queries` option for prosopite. | `[/schema_migrations/i]`
 `content_security_policy_nonce` | Sets the content security policy nonce to use when inserting Dial's script. Can be a string, or a Proc which receives `env` and response `headers` as arguments and returns the nonce string. | Rails generated nonce or `nil`
+
+## Comparison with [rack-mini-profiler](https://github.com/MiniProfiler/rack-mini-profiler)
+
+|                           | rack-mini-profiler                 | Dial                                                    |
+| :------------------------ | :--------------------------------- | :------------------------------------------------------ |
+| Compatibility             | Any Rack application               | Only Rails applications                                 |
+| Database Profiling        | Yes                                | Yes (via vernier hook - marker table, chart)            |
+| N+1 Query Detection       | Yes (*needs to be inferred)        | Yes (via prosopite)                                     |
+| Ruby Profiling            | Yes (with stackprof - flame graph) | Yes (via vernier - flame graph, stack chart, call tree) |
+| Ruby Allocation Profiling | Yes (with stackprof - flame graph) | Yes (via vernier - flame graph, stack chart, call tree) |
+| Memory Profiling          | Yes (with memory_profiler)         | Yes (*overall usage only) (via vernier hook - graph)    |
+| View Profiling            | Yes                                | Yes (via vernier hook - marker table, chart)            |
+| Snapshot Sampling         | Yes                                | No                                                      |
+| Production Support        | Yes                                | No (WIP)                                                |
+
+> [!NOTE]
+> SQL queries displayed in the profile are not annotated with the caller location by default. If you're not using the
+> [marginalia](https://github.com/basecamp/marginalia) gem to annotate your queries, you will need to extend your
+> application's [ActiveRecord QueryLogs](https://edgeapi.rubyonrails.org/classes/ActiveRecord/QueryLogs.html) yourself.
 
 ## Development
 
