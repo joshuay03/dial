@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.authors = ["Joshua Young"]
   spec.email = ["djry1999@gmail.com"]
 
-  spec.summary = "A modern Rails profiler"
+  spec.summary = "A modern profiler for your Rails application"
   spec.homepage = "https://github.com/joshuay03/dial"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.3.0"

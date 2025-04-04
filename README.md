@@ -5,7 +5,7 @@
 
 WIP
 
-A modern profiler for Rails applications.
+A modern profiler for your Rails application.
 
 Utilizes [vernier](https://github.com/jhawthorn/vernier) for profiling and
 [prosopite](https://github.com/charkost/prosopite) for N+1 query detection.
