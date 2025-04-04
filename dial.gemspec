@@ -19,9 +19,9 @@ Gem::Specification.new do |spec|
   spec.files = Dir["{lib}/**/*", "**/*.{gemspec,md,txt}"]
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "railties", ">= 7", "< 8.2"
-  spec.add_dependency "activerecord", ">= 7", "< 8.2"
-  spec.add_dependency "actionpack", ">= 7", "< 8.2"
+  spec.add_dependency "railties", ">= 7"
+  spec.add_dependency "activerecord", ">= 7"
+  spec.add_dependency "actionpack", ">= 7"
   spec.add_dependency "vernier"
   spec.add_dependency "prosopite"
   spec.add_dependency "pg_query"
