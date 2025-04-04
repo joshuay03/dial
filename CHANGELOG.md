@@ -1,5 +1,6 @@
 ## [Unreleased]
 
+- Perf: Write prosopite logs to IO stream instead of file
 - Remove upper bound on rails dependencies
 
 ## [0.2.4] - 2025-03-03

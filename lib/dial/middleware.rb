@@ -88,16 +88,14 @@ module Dial
 
     def clear_query_logs!
       [].tap do |query_logs|
-        File.open "#{query_log_dir_pathname}/#{PROSOPITE_LOG_FILENAME}", "r+" do |file|
-          entry = section = count = nil
-          file.each_line do |line|
-            entry, section, count = process_query_log_line line, entry, section, count
-            query_logs << entry if entry && section.nil?
-          end
-
-          file.truncate 0
-          file.rewind
+        entry = section = count = nil
+        PROSOPITE_LOG_IO.string.lines.each do |line|
+          entry, section, count = process_query_log_line line, entry, section, count
+          query_logs << entry if entry && section.nil?
         end
+
+        PROSOPITE_LOG_IO.truncate 0
+        PROSOPITE_LOG_IO.rewind
       end
     end
 
@@ -127,10 +125,6 @@ module Dial
 
     def profile_out_dir_pathname
       ::Rails.root.join VERNIER_PROFILE_OUT_RELATIVE_DIRNAME
-    end
-
-    def query_log_dir_pathname
-      ::Rails.root.join PROSOPITE_LOG_RELATIVE_DIRNAME
     end
   end
 end

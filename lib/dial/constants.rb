@@ -22,6 +22,5 @@ module Dial
   VERNIER_VIEWER_URL = "https://vernier.prof"
 
   PROSOPITE_IGNORE_QUERIES = [/schema_migrations/i].freeze
-  PROSOPITE_LOG_RELATIVE_DIRNAME = "log/dial"
-  PROSOPITE_LOG_FILENAME = "#{Util.uuid}_prosopite_#{PROGRAM_ID}.log".freeze
+  PROSOPITE_LOG_IO = StringIO.new
 end
