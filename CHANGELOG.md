@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.2.7] - 2025-04-05
+
 - Prevent style inheritance in panel
 
 ## [0.2.6] - 2025-04-05
