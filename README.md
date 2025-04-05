@@ -54,7 +54,7 @@ end
 Option | Description | Default
 :- | :- | :-
 `vernier_interval` | Sets the `interval` option for vernier. | `200`
-`vernier_allocation_interval` | Sets the `allocation_interval` option for vernier. | `20_000`
+`vernier_allocation_interval` | Sets the `allocation_interval` option for vernier. | `2_000`
 `prosopite_ignore_queries` | Sets the `ignore_queries` option for prosopite. | `[/schema_migrations/i]`
 `content_security_policy_nonce` | Sets the content security policy nonce to use when inserting Dial's script. Can be a string, or a Proc which receives `env` and response `headers` as arguments and returns the nonce string. | Rails generated nonce or `nil`
 
