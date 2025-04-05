@@ -9,7 +9,7 @@ Utilizes [vernier](https://github.com/jhawthorn/vernier) for profiling and
 [prosopite](https://github.com/charkost/prosopite) for N+1 query detection.
 
 > [!NOTE]
-> Check out the resources in the [Vernier](https://github.com/jhawthorn/vernier) project for more information on how to
+> Check out the resources in the vernier project for more information on how to
 > interpret the viewer, as well as comparisons with other profilers, including `stackprof`.
 
 ![Demo](demo.gif)
