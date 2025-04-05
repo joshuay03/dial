@@ -14,8 +14,7 @@ Utilizes [vernier](https://github.com/jhawthorn/vernier) for profiling and
 > Check out the resources in the [Vernier](https://github.com/jhawthorn/vernier) project for more information on how to
 > interpret the viewer, as well as comparisons with other profilers, including `stackprof`.
 
-Check out the demo:
-[![Demo](https://img.youtube.com/vi/LPXtfJ0c284/maxresdefault.jpg)](https://youtu.be/LPXtfJ0c284)
+![Demo](demo.gif)
 
 ## Installation
 
