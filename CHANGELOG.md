@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- Fix redeclaration of JS constants
+
 ## [0.2.7] - 2025-04-05
 
 - Prevent style inheritance in panel
