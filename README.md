@@ -10,7 +10,7 @@ Utilizes [vernier](https://github.com/jhawthorn/vernier) for profiling and
 
 > [!NOTE]
 > Check out the resources in the vernier project for more information on how to
-> interpret the viewer, as well as comparisons with other profilers, including `stackprof`.
+> interpret the viewer, as well as comparisons with other profilers, including stackprof.
 
 ![Demo](demo.gif)
 
