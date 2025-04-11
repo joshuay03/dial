@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.2.9] - 2025-04-11
+
+- No changes
+
 ## [0.2.8] - 2025-04-11
 
 - Fix redeclaration of JS constants
