@@ -12,12 +12,14 @@ module Dial
     include RubyStat
     include RailsStat
 
+    HTML_CONTENT_TYPE = "text/html"
+
     def initialize app
       @app = app
     end
 
     def call env
-      unless env[HTTP_ACCEPT]&.include? "text/html"
+      unless env[HTTP_ACCEPT]&.include? HTML_CONTENT_TYPE
         return @app.call env
       end
 
@@ -38,7 +40,7 @@ module Dial
       end
       server_timing = server_timing headers
 
-      unless headers[CONTENT_TYPE]&.include? "text/html"
+      unless headers[CONTENT_TYPE]&.include? HTML_CONTENT_TYPE
         return [status, headers, rack_body]
       end
 
