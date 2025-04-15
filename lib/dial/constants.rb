@@ -2,6 +2,7 @@
 
 require "rack"
 require "action_dispatch"
+require "stringio"
 
 require_relative "version"
 
