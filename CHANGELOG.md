@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- Add missing stringio require
+
 ## [0.2.9] - 2025-04-11
 
 - No changes
