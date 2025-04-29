@@ -3,11 +3,7 @@
 require "test_helper"
 
 module Dial
-  class TestConfiguration < Minitest::Test
-    def teardown
-      Dial.instance_variable_set :@_configuration, nil
-    end
-
+  class TestConfiguration < Dial::Test
     def test_configure_yields_a_new_configuration
       Dial.configure do |config|
         assert_instance_of Dial::Configuration, config
@@ -40,12 +36,10 @@ module Dial
     end
   end
 
-  class TestConfigurationIntegration < Minitest::Test
+  class TestConfigurationIntegration < Dial::Test
     def teardown
-      Dial.instance_variable_set :@_configuration, nil
+      super
       FileUtils.rm_rf app.root.join "config"
-      ActiveSupport::Dependencies.autoload_paths = []
-      ActiveSupport::Dependencies.autoload_once_paths = []
     end
 
     def test_configuration_can_be_changed
@@ -56,7 +50,7 @@ module Dial
           config.prosopite_ignore_queries = [/only_ignore_me/]
         end
       RUBY
-      app.initialize!
+      app(true).initialize!
 
       assert_equal 50, Dial._configuration.vernier_interval
       assert_equal 100, Dial._configuration.vernier_allocation_interval
@@ -64,7 +58,7 @@ module Dial
     end
 
     def test_configuration_is_frozen_after_app_initialization
-      app.initialize!
+      app(true).initialize!
       error = assert_raises RuntimeError do
         Dial.configure do |config|
           config.vernier_interval = 50

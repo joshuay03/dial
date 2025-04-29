@@ -11,20 +11,20 @@ module Dial
 
           <div id="dial">
             <div id="dial-preview">
-              <span>
+              <span id="dial-preview-header">
                 #{formatted_rails_route_info env} |
                 #{formatted_request_timing env} |
                 #{formatted_profile_output env, profile_out_filename}
               </span>
-              <span>#{formatted_rails_version}</span>
-              <span>#{formatted_rack_version}</span>
-              <span>#{formatted_ruby_version}</span>
+              <span id="dial-preview-rails-version">#{formatted_rails_version}</span>
+              <span id="dial-preview-rack-version">#{formatted_rack_version}</span>
+              <span id="dial-preview-ruby-version">#{formatted_ruby_version}</span>
             </div>
 
             <hr>
 
             <div id="dial-details">
-              <details>
+              <details id="dial-details-n-plus-ones">
                 <summary>N+1s</summary>
                 <div class="section query-logs">
                   #{formatted_query_logs query_logs}
@@ -33,7 +33,7 @@ module Dial
 
               <hr>
 
-              <details>
+              <details id="dial-details-server-timing">
                 <summary>Server timing</summary>
                 <div class="section">
                   #{formatted_server_timing server_timing}
@@ -42,7 +42,7 @@ module Dial
 
               <hr>
 
-              <details>
+              <details id="dial-details-ruby-vm-stat">
                 <summary>RubyVM stat</summary>
                 <div class="section">
                   #{formatted_ruby_vm_stat ruby_vm_stat}
@@ -51,7 +51,7 @@ module Dial
 
               <hr>
 
-              <details>
+              <details id="dial-details-gc-stat">
                 <summary>GC stat</summary>
                 <div class="section">
                   #{formatted_gc_stat gc_stat}
@@ -60,7 +60,7 @@ module Dial
 
               <hr>
 
-              <details>
+              <details id="dial-details-gc-stat-heap">
                 <summary>GC stat heap</summary>
                 <div class="section">
                   #{formatted_gc_stat_heap gc_stat_heap}
