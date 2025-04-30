@@ -24,6 +24,7 @@ jobs:
           - "3.3.6"
           - "3.4.0"
           - "3.4.1"
+          - "3.4.2"
           - head
         rails:
           - "7.0"
@@ -32,7 +33,8 @@ jobs:
           - "8.0"
 
     env:
-      RAILS_ENV: "${{ matrix.rails }}"
+      RAILS_VERSION: ${{ matrix.rails }}
+      RAILS_ENV: development
 
     steps:
       - uses: actions/checkout@v4
