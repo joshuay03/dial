@@ -12,4 +12,16 @@ gem "debug"
 
 gem "sqlite3"
 
+case ENV["RAILS_VERSION"]
+when "7.1"
+  if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new("3.5")
+    gem "logger"
+    gem "benchmark"
+  end
+when "7.2"
+  if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new("3.5")
+    gem "benchmark"
+  end
+end
+
 gem "rails", ENV["RAILS_VERSION"]
