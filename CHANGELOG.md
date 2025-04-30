@@ -1,5 +1,6 @@
 ## [Unreleased]
 
+- Add missing logger require
 - Add missing stringio require
 
 ## [0.2.9] - 2025-04-11
