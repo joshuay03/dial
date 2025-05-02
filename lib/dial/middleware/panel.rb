@@ -4,6 +4,8 @@ require "uri"
 
 module Dial
   class Panel
+    QUERY_CHARS_TRUNCATION_THRESHOLD = 100
+
     class << self
       def html env, headers, profile_out_filename, query_logs, ruby_vm_stat, gc_stat, gc_stat_heap, server_timing
         <<~HTML
@@ -223,7 +225,7 @@ module Dial
           query_logs.map do |(queries, stack_lines)|
             <<~HTML
               <details>
-                <summary>#{queries.shift}</summary>
+                <summary>#{truncated_query queries.shift}</summary>
                 <div class="section query-logs">
                   #{queries.map { |query| "<span>#{query}</span>" }.join}
                   #{stack_lines.map { |stack_line| "<span>#{stack_line}</span>" }.join}
@@ -234,6 +236,12 @@ module Dial
         else
           "<span>N/A</span>"
         end
+      end
+
+      def truncated_query query
+        return query if query.length <= QUERY_CHARS_TRUNCATION_THRESHOLD
+
+        query[0...QUERY_CHARS_TRUNCATION_THRESHOLD] + "..."
       end
 
       def formatted_ruby_vm_stat ruby_vm_stat

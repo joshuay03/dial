@@ -68,8 +68,12 @@ module Dial
     def test_n_plus_ones
       assert_select "#dial-details-n-plus-ones" do |el|
         assert_select "summary", text: "N+1s"
-        assert_select "summary", text: /SELECT .*FROM "indicators".*WHERE "indicators"."gauge_id" = \? LIMIT \?/
-        assert_select "span", text: /SELECT .*FROM "indicators".*WHERE "indicators"."gauge_id" = \? LIMIT \?/, count: 4
+        assert_select "summary", text: <<-SQL.squish
+          SELECT "indicators".* FROM "indicators" WHERE "indicators"."gauge_id" = ? /* Long annotation so the ...
+        SQL
+        assert_select "span", text: <<-SQL.squish, count: 4
+          SELECT "indicators".* FROM "indicators" WHERE "indicators"."gauge_id" = ? /* Long annotation so the query exceeds the maximum length for presentation */ LIMIT ?
+        SQL
         assert_select "span", text: "+ 5 more queries"
       end
     end

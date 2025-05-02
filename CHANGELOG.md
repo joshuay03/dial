@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- Truncate summary N+1 queries to 100 chars
+
 ## [0.3.0] - 2025-05-02
 
 - Require rails 7.1.0 or later
