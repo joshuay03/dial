@@ -11,6 +11,7 @@ module Dial
 
   HTTP_ACCEPT = "HTTP_ACCEPT"
   CONTENT_TYPE = ::Rack::CONTENT_TYPE
+  CONTENT_TYPE_HTML = "text/html"
   CONTENT_LENGTH = ::Rack::CONTENT_LENGTH
   NONCE = ::ActionDispatch::ContentSecurityPolicy::Request::NONCE
   REQUEST_TIMING = "dial_request_timing"
