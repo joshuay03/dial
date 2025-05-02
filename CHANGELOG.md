@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.3.0] - 2025-05-02
+
 - Require rails 7.1.0 or later
 - Add missing logger require
 - Add missing stringio require
