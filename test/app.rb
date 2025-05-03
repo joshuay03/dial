@@ -31,7 +31,10 @@ end
 class Indicator < ActiveRecord::Base
   belongs_to :gauge
 
-  default_scope { annotate("Long annotation so the query exceeds the maximum length for presentation") }
+  default_scope { annotate <<~ANNOTATION }
+    Long annotation so the query exceeds the maximum length for presentation
+    and contains newlines
+  ANNOTATION
 end
 
 class DialsController < ActionController::Base

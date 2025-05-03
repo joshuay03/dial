@@ -72,7 +72,7 @@ module Dial
           SELECT "indicators".* FROM "indicators" WHERE "indicators"."gauge_id" = ? /* Long annotation so the ...
         SQL
         assert_select "span", text: <<-SQL.squish, count: 4
-          SELECT "indicators".* FROM "indicators" WHERE "indicators"."gauge_id" = ? /* Long annotation so the query exceeds the maximum length for presentation */ LIMIT ?
+          SELECT "indicators".* FROM "indicators" WHERE "indicators"."gauge_id" = ? /* Long annotation so the query exceeds the maximum length for presentation and contains newlines */ LIMIT ?
         SQL
         assert_select "span", text: "+ 5 more queries"
       end
