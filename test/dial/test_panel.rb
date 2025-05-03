@@ -9,7 +9,7 @@ module Dial
         app.initialize!
 
         ActiveRecord::Schema.define do
-          create_table :gauges, force: true do |t|
+          create_table :gauges, force: true do
           end
 
           create_table :indicators, force: true do |t|
@@ -66,7 +66,7 @@ module Dial
     end
 
     def test_n_plus_ones
-      assert_select "#dial-details-n-plus-ones" do |el|
+      assert_select "#dial-details-n-plus-ones" do
         assert_select "summary", text: "N+1s"
         assert_select "summary", text: <<-SQL.squish
           SELECT "indicators".* FROM "indicators" WHERE "indicators"."gauge_id" = ? /* Long annotation so the ...
