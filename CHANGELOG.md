@@ -1,5 +1,6 @@
 ## [Unreleased]
 
+- Only show truncated summary + one full query in N+1 logs
 - Fix parsing of multiline N+1 query logs
 - Truncate summary N+1 queries to 100 chars
 

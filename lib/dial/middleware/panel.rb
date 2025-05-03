@@ -225,7 +225,7 @@ module Dial
           query_logs.map do |(queries, stack_lines)|
             <<~HTML
               <details>
-                <summary>#{truncated_query queries.shift}</summary>
+                <summary>#{truncated_query queries.first}</summary>
                 <div class="section query-logs">
                   #{queries.map { |query| "<span>#{query}</span>" }.join}
                   #{stack_lines.map { |stack_line| "<span>#{stack_line}</span>" }.join}
