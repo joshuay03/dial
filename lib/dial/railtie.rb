@@ -4,8 +4,8 @@ require "rails"
 require "active_record"
 require "prosopite"
 
-require_relative "prosopite"
 require_relative "middleware"
+require_relative "prosopite"
 require_relative "prosopite_logger"
 
 module Dial
