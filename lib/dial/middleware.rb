@@ -3,6 +3,7 @@
 require "vernier"
 require "prosopite"
 
+require_relative "prosopite"
 require_relative "middleware/panel"
 require_relative "middleware/ruby_stat"
 require_relative "middleware/rails_stat"
