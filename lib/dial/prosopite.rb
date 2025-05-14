@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "active_support/core_ext/string/filters"
+
 module Dial
   module Prosopite
     def send_notifications
