@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- Consolidate railtie initializers
+
 ## [0.3.1] - 2025-05-03
 
 - Only show truncated summary + one full query in N+1 logs
