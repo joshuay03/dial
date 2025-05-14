@@ -24,7 +24,7 @@ module Dial
 
       start_time = Process.clock_gettime Process::CLOCK_MONOTONIC
 
-      profile_out_filename = "#{Util.uuid}_vernier.json.gz"
+      profile_out_filename = "#{Util.uuid}_vernier" + VERNIER_PROFILE_OUT_FILE_EXTENSION
       profile_out_pathname = "#{profile_out_dir_pathname}/#{profile_out_filename}"
 
       status, headers, rack_body, ruby_vm_stat, gc_stat, gc_stat_heap, vernier_result = nil

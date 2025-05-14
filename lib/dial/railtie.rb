@@ -14,7 +14,7 @@ module Dial
       app.middleware.insert_before 0, Middleware
 
       # clean up stale vernier profile output files
-      stale_files("#{profile_out_dir_pathname}/*.json.gz").each do |profile_out_file|
+      stale_files("#{profile_out_dir_pathname}/*" + VERNIER_PROFILE_OUT_FILE_EXTENSION).each do |profile_out_file|
         File.delete profile_out_file rescue nil
       end
 
