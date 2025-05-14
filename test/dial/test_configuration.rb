@@ -39,6 +39,7 @@ module Dial
   class TestConfigurationIntegration < Dial::Test
     def teardown
       super
+
       FileUtils.rm_rf app.root.join "config"
     end
 

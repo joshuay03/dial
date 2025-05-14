@@ -31,6 +31,7 @@ module Dial
 
     def freeze
       @options.freeze
+
       super
     end
   end

@@ -18,6 +18,7 @@ class DialApp < Rails::Application
   def initialize!
     verbose = $VERBOSE
     $VERBOSE = nil
+
     super
   ensure
     $VERBOSE = verbose
