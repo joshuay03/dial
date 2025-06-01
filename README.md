@@ -70,7 +70,7 @@ Option | Description | Default
 | Memory Profiling          | Yes (with memory_profiler)         | Yes (*overall usage only) (via vernier hook - graph)    |
 | View Profiling            | Yes                                | Yes (via vernier hook - marker table, chart)            |
 | Snapshot Sampling         | Yes                                | No                                                      |
-| Production Support        | Yes                                | No (WIP)                                                |
+| Production Support        | Yes                                | No                                                      |
 
 > [!NOTE]
 > SQL queries displayed in the profile are not annotated with the caller location by default. If you're not using the
