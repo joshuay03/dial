@@ -16,7 +16,7 @@ jobs:
       matrix:
         ruby:
           - "3.3.8"
-          - "3.4.4"
+          - "3.4.5"
           - head
         rails:
           - "7.1"
