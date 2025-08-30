@@ -43,6 +43,7 @@ mount Dial::Engine, at: "/" if Rails.env.development?
 # config/initializers/dial.rb
 
 Dial.configure do |config|
+  config.sampling_percentage = 50
   config.vernier_interval = 100
   config.vernier_allocation_interval = 10_000
   config.prosopite_ignore_queries += [/pg_sleep/i]
@@ -53,10 +54,11 @@ end
 
 Option | Description | Default
 :- | :- | :-
+`sampling_percentage` | Percentage of requests to profile. | `100` in development, `1` in production
+`content_security_policy_nonce` | Sets the content security policy nonce to use when inserting Dial's script. Can be a string, or a Proc which receives `env` and response `headers` as arguments and returns the nonce string. | Rails generated nonce or `nil`
 `vernier_interval` | Sets the `interval` option for vernier. | `200`
 `vernier_allocation_interval` | Sets the `allocation_interval` option for vernier. | `2_000`
 `prosopite_ignore_queries` | Sets the `ignore_queries` option for prosopite. | `[/schema_migrations/i]`
-`content_security_policy_nonce` | Sets the content security policy nonce to use when inserting Dial's script. Can be a string, or a Proc which receives `env` and response `headers` as arguments and returns the nonce string. | Rails generated nonce or `nil`
 
 ## Comparison with [rack-mini-profiler](https://github.com/MiniProfiler/rack-mini-profiler)
 

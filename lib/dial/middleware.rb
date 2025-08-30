@@ -22,6 +22,10 @@ module Dial
         return @app.call env
       end
 
+      unless should_profile?
+        return @app.call env
+      end
+
       start_time = Process.clock_gettime Process::CLOCK_MONOTONIC
 
       profile_out_filename = "#{Util.uuid}_vernier" + VERNIER_PROFILE_OUT_FILE_EXTENSION
@@ -126,6 +130,10 @@ module Dial
 
     def profile_out_dir_pathname
       ::Rails.root.join VERNIER_PROFILE_OUT_RELATIVE_DIRNAME
+    end
+
+    def should_profile?
+      rand(100) < Dial._configuration.sampling_percentage
     end
   end
 end

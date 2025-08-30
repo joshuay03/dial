@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- Add sampling configuration to control percentage of requests profiled
+
 ## [0.3.2] - 2025-05-14
 
 - Consolidate railtie initializers
