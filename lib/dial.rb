@@ -4,6 +4,7 @@ require_relative "dial/constants"
 require_relative "dial/util"
 
 require_relative "dial/configuration"
+require_relative "dial/storage"
 
 require_relative "dial/railtie"
 require_relative "dial/engine"

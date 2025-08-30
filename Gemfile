@@ -31,3 +31,7 @@ end
 gem "rails", ENV["RAILS_VERSION"]
 
 gem "rails-dom-testing"
+
+gem "redis", ">= 5.0"
+gem "redis-clustering", ">= 5.0"
+gem "dalli", ">= 3.0"

@@ -28,8 +28,8 @@ module Dial
 
       start_time = Process.clock_gettime Process::CLOCK_MONOTONIC
 
-      profile_out_filename = "#{Util.uuid}_vernier" + VERNIER_PROFILE_OUT_FILE_EXTENSION
-      profile_out_pathname = "#{profile_out_dir_pathname}/#{profile_out_filename}"
+      uuid = Util.uuid
+      profile_key = "#{uuid}_vernier:profile"
 
       status, headers, rack_body, ruby_vm_stat, gc_stat, gc_stat_heap, vernier_result = nil
       ::Prosopite.scan do
@@ -47,13 +47,13 @@ module Dial
         return [status, headers, rack_body]
       end
 
-      write_vernier_result! vernier_result, profile_out_pathname
+      store_profile_data! vernier_result, profile_key
       query_logs = clear_query_logs!
 
       finish_time = Process.clock_gettime Process::CLOCK_MONOTONIC
       env[REQUEST_TIMING] = ((finish_time - start_time) * 1_000).round 2
 
-      panel_html = Panel.html env, headers, profile_out_filename, query_logs, ruby_vm_stat, gc_stat, gc_stat_heap, server_timing
+      panel_html = Panel.html env, headers, "#{uuid}_vernier", query_logs, ruby_vm_stat, gc_stat, gc_stat_heap, server_timing
       body = PanelInjector.new rack_body, panel_html
 
       headers.delete CONTENT_LENGTH
@@ -75,12 +75,18 @@ module Dial
       ]
     end
 
-    def write_vernier_result! result, pathname
+    def store_profile_data! vernier_result, profile_key
       Thread.new do
-        Thread.current.name = "Dial::Middleware#write_vernier_result!"
+        Thread.current.name = "Dial::Middleware#store_profile_data!"
         Thread.current.report_on_exception = false
 
-        result.write out: pathname
+        Tempfile.create(["vernier_profile", ".json"]) do |temp_file|
+          vernier_result.write out: temp_file.path
+          profile_data = File.read(temp_file.path)
+          Storage.store profile_key, profile_data
+        end
+
+        Storage.cleanup
       end
     end
 
@@ -119,10 +125,6 @@ module Dial
           end
         end
       end
-    end
-
-    def profile_out_dir_pathname
-      ::Rails.root.join VERNIER_PROFILE_OUT_RELATIVE_DIRNAME
     end
 
     def should_profile?
