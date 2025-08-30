@@ -53,19 +53,12 @@ module Dial
       finish_time = Process.clock_gettime Process::CLOCK_MONOTONIC
       env[REQUEST_TIMING] = ((finish_time - start_time) * 1_000).round 2
 
-      body = String.new.tap do |str|
-        rack_body.each { |chunk| str << chunk }
-        rack_body.close if rack_body.respond_to? :close
+      panel_html = Panel.html env, headers, profile_out_filename, query_logs, ruby_vm_stat, gc_stat, gc_stat_heap, server_timing
+      body = PanelInjector.new rack_body, panel_html
 
-        str.sub! "</body>", <<~HTML
-            #{Panel.html env, headers, profile_out_filename, query_logs, ruby_vm_stat, gc_stat, gc_stat_heap, server_timing}
-          </body>
-        HTML
-      end
+      headers.delete CONTENT_LENGTH
 
-      headers[CONTENT_LENGTH] = body.bytesize.to_s
-
-      [status, headers, [body]]
+      [status, headers, body]
     end
 
     private
@@ -134,6 +127,39 @@ module Dial
 
     def should_profile?
       rand(100) < Dial._configuration.sampling_percentage
+    end
+  end
+
+  class PanelInjector
+    def initialize original_body, panel_html
+      @original_body = original_body
+      @panel_html = panel_html
+      @injected = false
+    end
+
+    def each
+      @original_body.each do |chunk|
+        if !@injected && chunk.include?("</body>")
+          @injected = true
+          yield chunk.sub("</body>", "#{@panel_html}\n</body>")
+        else
+          yield chunk
+        end
+      end
+
+      yield @panel_html unless @injected
+    ensure
+      close
+    end
+
+    def close
+      @original_body.close if @original_body.respond_to? :close
+    end
+
+    def call stream
+      each { |chunk| stream.write chunk }
+    ensure
+      close
     end
   end
 end

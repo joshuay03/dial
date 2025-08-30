@@ -1,6 +1,7 @@
 ## [Unreleased]
 
 - Add sampling configuration to control percentage of requests profiled
+- Replace response body buffering with streaming response wrapper
 
 ## [0.3.2] - 2025-05-14
 
