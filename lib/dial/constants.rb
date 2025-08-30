@@ -25,5 +25,4 @@ module Dial
   VERNIER_VIEWER_URL = "https://vernier.prof"
 
   PROSOPITE_IGNORE_QUERIES = [/schema_migrations/i].freeze
-  PROSOPITE_LOG_IO = StringIO.new
 end
