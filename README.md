@@ -19,9 +19,7 @@ Utilizes [vernier](https://github.com/jhawthorn/vernier) for profiling and
 1. Add the gem to your Rails application's Gemfile:
 
 ```ruby
-group :development do
-  gem "dial"
-end
+gem "dial"
 ```
 
 2. Install the gem:
@@ -34,7 +32,7 @@ bundle install
 
 ```ruby
 # this will mount the engine at /dial
-mount Dial::Engine, at: "/" if Rails.env.development?
+mount Dial::Engine, at: "/"
 ```
 
 4. (Optional) Configure the gem in an initializer:
@@ -44,6 +42,8 @@ mount Dial::Engine, at: "/" if Rails.env.development?
 
 Dial.configure do |config|
   config.sampling_percentage = 50
+  config.storage = Dial::Storage::RedisAdapter
+  config.storage_options = { client: Redis.new(url: ENV["REDIS_URL"]), ttl: 86400 }
   config.vernier_interval = 100
   config.vernier_allocation_interval = 10_000
   config.prosopite_ignore_queries += [/pg_sleep/i]
@@ -55,10 +55,61 @@ end
 Option | Description | Default
 :- | :- | :-
 `sampling_percentage` | Percentage of requests to profile. | `100` in development, `1` in production
+`storage` | Storage adapter class for profile data | `Dial::Storage::FileAdapter`
+`storage_options` | Options hash passed to storage adapter | `{ ttl: 3600 }`
 `content_security_policy_nonce` | Sets the content security policy nonce to use when inserting Dial's script. Can be a string, or a Proc which receives `env` and response `headers` as arguments and returns the nonce string. | Rails generated nonce or `nil`
 `vernier_interval` | Sets the `interval` option for vernier. | `200`
 `vernier_allocation_interval` | Sets the `allocation_interval` option for vernier. | `2_000`
 `prosopite_ignore_queries` | Sets the `ignore_queries` option for prosopite. | `[/schema_migrations/i]`
+
+## Storage Backends
+
+### File Storage (Default)
+
+Profile data is stored as files on disk with polled expiration. Only suitable for development and single-server deployments.
+
+```ruby
+Dial.configure do |config|
+  config.storage = Dial::Storage::FileAdapter
+  config.storage_options = { ttl: 86400 }
+end
+```
+
+### Redis Storage
+
+Profile data is stored in Redis with automatic expiration. Supports both single Redis instances and Redis Cluster.
+
+```ruby
+# Single Redis instance
+Dial.configure do |config|
+  config.storage = Dial::Storage::RedisAdapter
+  config.storage_options = { client: Redis.new(url: "redis://localhost:6379"), ttl: 86400 }
+end
+
+# Redis Cluster
+Dial.configure do |config|
+  config.storage = Dial::Storage::RedisAdapter
+  config.storage_options = {
+    client: Redis::Cluster.new(nodes: [
+      "redis://node1:7000",
+      "redis://node2:7001",
+      "redis://node3:7002"
+    ]),
+    ttl: 86400
+  }
+end
+```
+
+### Memcached Storage
+
+Profile data is stored in Memcached with automatic expiration.
+
+```ruby
+Dial.configure do |config|
+  config.storage = Dial::Storage::MemcachedAdapter
+  config.storage_options = { client: Dalli::Client.new("localhost:11211"), ttl: 86400 }
+end
+```
 
 ## Comparison with [rack-mini-profiler](https://github.com/MiniProfiler/rack-mini-profiler)
 
@@ -72,7 +123,8 @@ Option | Description | Default
 | Memory Profiling          | Yes (with memory_profiler)         | Yes (*overall usage only) (via vernier hook - graph)    |
 | View Profiling            | Yes                                | Yes (via vernier hook - marker table, chart)            |
 | Snapshot Sampling         | Yes                                | No                                                      |
-| Production Support        | Yes                                | No                                                      |
+| Storage Backends          | Redis, Memcached, File, Memory     | Redis, Memcached, File                                  |
+| Production Ready          | Yes                                | Yes                                                     |
 
 > [!NOTE]
 > SQL queries displayed in the profile are not annotated with the caller location by default. If you're not using the
@@ -83,6 +135,10 @@ Option | Description | Default
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `bundle exec rake test` to run the
 tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+
+### Testing Storage Adapters
+
+To test the Redis and Memcached storage adapters, you'll need running instances: `docker compose -f docker-compose.storage.yml up`
 
 ## Contributing
 

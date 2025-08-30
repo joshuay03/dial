@@ -16,10 +16,9 @@ module Dial
   NONCE = ::ActionDispatch::ContentSecurityPolicy::Request::NONCE
   REQUEST_TIMING = "dial_request_timing"
 
-  FILE_STALE_SECONDS = 60 * 60
-
   SAMPLING_PERCENTAGE_DEV = 100
   SAMPLING_PERCENTAGE_PROD = 1
+  STORAGE_TTL = 60 * 60
   EMPTY_NONCE = ""
 
   VERNIER_INTERVAL = 200

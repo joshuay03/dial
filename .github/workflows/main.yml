@@ -26,9 +26,18 @@ jobs:
     env:
       RAILS_VERSION: ${{ matrix.rails }}
       RAILS_ENV: development
+      REDIS_URL: redis://localhost:6379
+      REDIS_CLUSTER_NODE_1: redis://localhost:8000
+      REDIS_CLUSTER_NODE_2: redis://localhost:8001
+      REDIS_CLUSTER_NODE_3: redis://localhost:8002
+      MEMCACHED_URL: localhost:11211
 
     steps:
       - uses: actions/checkout@v4
+      - name: Start storage services
+        run: |
+          docker compose -f docker-compose.storage.yml up -d
+          docker compose -f docker-compose.storage.yml wait redis-cluster-init
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -36,3 +45,6 @@ jobs:
           bundler-cache: true
       - name: Run the default task
         run: bundle exec rake
+      - name: Stop storage services
+        if: always()
+        run: docker compose -f docker-compose.storage.yml down

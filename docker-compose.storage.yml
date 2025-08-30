@@ -1,0 +1,95 @@
+x-redis-cluster: &redis-cluster-template
+  image: redis:latest
+  network_mode: host
+  command: redis-server --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --appendonly yes
+
+services:
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis-cluster-1:
+    <<: *redis-cluster-template
+    command: redis-server --port 8000 --bind 127.0.0.1 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --appendonly yes
+    volumes:
+      - redis_cluster_1:/data
+
+  redis-cluster-2:
+    <<: *redis-cluster-template
+    command: redis-server --port 8001 --bind 127.0.0.1 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --appendonly yes
+    volumes:
+      - redis_cluster_2:/data
+
+  redis-cluster-3:
+    <<: *redis-cluster-template
+    command: redis-server --port 8002 --bind 127.0.0.1 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --appendonly yes
+    volumes:
+      - redis_cluster_3:/data
+
+  redis-cluster-4:
+    <<: *redis-cluster-template
+    command: redis-server --port 8003 --bind 127.0.0.1 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --appendonly yes
+    volumes:
+      - redis_cluster_4:/data
+
+  redis-cluster-5:
+    <<: *redis-cluster-template
+    command: redis-server --port 8004 --bind 127.0.0.1 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --appendonly yes
+    volumes:
+      - redis_cluster_5:/data
+
+  redis-cluster-6:
+    <<: *redis-cluster-template
+    command: redis-server --port 8005 --bind 127.0.0.1 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --appendonly yes
+    volumes:
+      - redis_cluster_6:/data
+
+  redis-cluster-init:
+    image: redis:latest
+    network_mode: host
+    depends_on:
+      - redis-cluster-1
+      - redis-cluster-2
+      - redis-cluster-3
+      - redis-cluster-4
+      - redis-cluster-5
+      - redis-cluster-6
+    command: |
+      sh -c '
+        echo "Waiting for Redis cluster nodes to be ready..."
+        until redis-cli -h 127.0.0.1 -p 8000 ping && redis-cli -h 127.0.0.1 -p 8001 ping && redis-cli -h 127.0.0.1 -p 8002 ping && redis-cli -h 127.0.0.1 -p 8003 ping && redis-cli -h 127.0.0.1 -p 8004 ping && redis-cli -h 127.0.0.1 -p 8005 ping; do
+          echo "Waiting for all Redis nodes..."
+          sleep 2
+        done
+        echo "All Redis nodes are ready. Initializing cluster..."
+        redis-cli --cluster create 127.0.0.1:8000 127.0.0.1:8001 127.0.0.1:8002 127.0.0.1:8003 127.0.0.1:8004 127.0.0.1:8005 --cluster-replicas 1 --cluster-yes
+        echo "Redis cluster initialized successfully"
+      '
+    restart: "no"
+    volumes:
+      - redis_cluster_init:/data
+
+  memcached:
+    image: memcached:latest
+    ports:
+      - "11211:11211"
+    command: memcached -m 64
+
+volumes:
+  redis_data:
+  redis_cluster_1:
+  redis_cluster_2:
+  redis_cluster_3:
+  redis_cluster_4:
+  redis_cluster_5:
+  redis_cluster_6:
+  redis_cluster_init:

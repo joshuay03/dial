@@ -28,9 +28,6 @@ module Dial
 
       start_time = Process.clock_gettime Process::CLOCK_MONOTONIC
 
-      profile_out_filename = "#{Util.uuid}_vernier" + VERNIER_PROFILE_OUT_FILE_EXTENSION
-      profile_out_pathname = "#{profile_out_dir_pathname}/#{profile_out_filename}"
-
       status, headers, rack_body, ruby_vm_stat, gc_stat, gc_stat_heap, vernier_result = nil
       ::Prosopite.scan do
         vernier_result = ::Vernier.profile interval: Dial._configuration.vernier_interval, \
@@ -41,19 +38,19 @@ module Dial
           end
         end
       end
-      server_timing = server_timing headers
 
       unless headers[CONTENT_TYPE]&.include? CONTENT_TYPE_HTML
         return [status, headers, rack_body]
       end
 
-      write_vernier_result! vernier_result, profile_out_pathname
-      query_logs = clear_query_logs!
-
       finish_time = Process.clock_gettime Process::CLOCK_MONOTONIC
       env[REQUEST_TIMING] = ((finish_time - start_time) * 1_000).round 2
 
-      panel_html = Panel.html env, headers, profile_out_filename, query_logs, ruby_vm_stat, gc_stat, gc_stat_heap, server_timing
+      profile_key = Storage.generate_profile_key
+      store_profile_data! vernier_result, (Storage.profile_storage_key profile_key)
+      query_logs = clear_query_logs!
+      server_timing = server_timing headers
+      panel_html = Panel.html env, headers, profile_key, query_logs, ruby_vm_stat, gc_stat, gc_stat_heap, server_timing
       body = PanelInjector.new rack_body, panel_html
 
       headers.delete CONTENT_LENGTH
@@ -75,12 +72,19 @@ module Dial
       ]
     end
 
-    def write_vernier_result! result, pathname
-      Thread.new do
-        Thread.current.name = "Dial::Middleware#write_vernier_result!"
+    def store_profile_data! vernier_result, profile_storage_key
+      Thread.new(vernier_result, profile_storage_key) do |vernier_result, profile_storage_key|
+        Thread.current.name = "Dial::Middleware#store_profile_data!"
         Thread.current.report_on_exception = false
 
-        result.write out: pathname
+        # TODO: Support StringIO in vernier's #write method to avoid temp file I/O
+        Tempfile.create(["vernier_profile", ".json"]) do |temp_file|
+          vernier_result.write out: temp_file.path
+          profile_data = File.read(temp_file.path)
+          Storage.store profile_storage_key, profile_data
+        end
+
+        Storage.cleanup
       end
     end
 
@@ -119,10 +123,6 @@ module Dial
           end
         end
       end
-    end
-
-    def profile_out_dir_pathname
-      ::Rails.root.join VERNIER_PROFILE_OUT_RELATIVE_DIRNAME
     end
 
     def should_profile?

@@ -8,6 +8,7 @@ module Dial
       unless app.initialized?
         app.initialize!
 
+        ActiveRecord::Migration.verbose = false
         ActiveRecord::Schema.define do
           create_table :gauges, force: true do
           end

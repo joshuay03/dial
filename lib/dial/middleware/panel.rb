@@ -7,7 +7,7 @@ module Dial
     QUERY_CHARS_TRUNCATION_THRESHOLD = 100
 
     class << self
-      def html env, headers, profile_out_filename, query_logs, ruby_vm_stat, gc_stat, gc_stat_heap, server_timing
+      def html env, headers, profile_key, query_logs, ruby_vm_stat, gc_stat, gc_stat_heap, server_timing
         <<~HTML
           <style>#{style}</style>
 
@@ -16,7 +16,7 @@ module Dial
               <span id="dial-preview-header">
                 #{formatted_rails_route_info env} |
                 #{formatted_request_timing env} |
-                #{formatted_profile_output env, profile_out_filename}
+                #{formatted_profile_output env, profile_key}
               </span>
               <span id="dial-preview-rails-version">#{formatted_rails_version}</span>
               <span id="dial-preview-rack-version">#{formatted_rack_version}</span>
@@ -189,11 +189,10 @@ module Dial
         "<b>Request timing:</b> #{env[REQUEST_TIMING]}ms"
       end
 
-      def formatted_profile_output env, profile_out_filename
+      def formatted_profile_output env, profile_key
         url_base = ::Rails.application.routes.url_helpers.dial_url host: env[::Rack::HTTP_HOST]
         prefix = "/" unless url_base.end_with? "/"
-        uuid = profile_out_filename.delete_suffix VERNIER_PROFILE_OUT_FILE_EXTENSION
-        profile_out_url = URI.encode_www_form_component url_base + "#{prefix}dial/profile?uuid=#{uuid}"
+        profile_out_url = URI.encode_www_form_component url_base + "#{prefix}dial/profile?key=#{profile_key}"
 
         "<a href='https://vernier.prof/from-url/#{profile_out_url}' target='_blank'>View profile</a>"
       end

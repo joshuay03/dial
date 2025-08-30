@@ -10,18 +10,10 @@ require_relative "prosopite_logger"
 module Dial
   class Railtie < ::Rails::Railtie
     initializer "dial.setup", after: :load_config_initializers do |app|
-      # use middleware
-      app.middleware.insert_before 0, Middleware
-
-      # clean up stale vernier profile output files
-      stale_files("#{profile_out_dir_pathname}/*" + VERNIER_PROFILE_OUT_FILE_EXTENSION).each do |profile_out_file|
-        File.delete profile_out_file rescue nil
-      end
+      # clean up stale storage data
+      Storage.cleanup
 
       app.config.after_initialize do
-        # set up vernier
-        FileUtils.mkdir_p ::Rails.root.join VERNIER_PROFILE_OUT_RELATIVE_DIRNAME
-
         # set up prosopite
         if ::ActiveRecord::Base.configurations.configurations.any? { |config| config.adapter == "postgresql" }
           require "pg_query"
@@ -34,17 +26,9 @@ module Dial
       end
     end
 
-    private
-
-    def stale_files glob_pattern
-      Dir.glob(glob_pattern).select do |file|
-        timestamp = Util.uuid_timestamp Util.file_name_uuid File.basename file
-        timestamp < Time.now - FILE_STALE_SECONDS
-      end
-    end
-
-    def profile_out_dir_pathname
-      ::Rails.root.join VERNIER_PROFILE_OUT_RELATIVE_DIRNAME
+    initializer "dial.middleware", before: :build_middleware_stack do |app|
+      # use middleware
+      app.middleware.insert_before 0, Middleware
     end
   end
 end

@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
+require "uri"
+
 Dial::Engine.routes.draw do
   scope path: "/dial", as: "dial" do
     get "profile", to: lambda { |env|
-      uuid = env[::Rack::QUERY_STRING].sub "uuid=", ""
-
-      # Validate UUID format (should end with _vernier)
-      unless uuid.match?(/\A[0-9a-f-]+_vernier\z/)
+      query_params = URI.decode_www_form(env[::Rack::QUERY_STRING]).to_h
+      profile_key = query_params["key"]
+      unless profile_key && profile_key.match?(/\A[0-9a-f-]+_vernier\z/i)
         return [
           400,
           { "Content-Type" => "text/plain" },
@@ -14,28 +15,27 @@ Dial::Engine.routes.draw do
         ]
       end
 
-      path = String ::Rails.root.join Dial::VERNIER_PROFILE_OUT_RELATIVE_DIRNAME, (uuid + Dial::VERNIER_PROFILE_OUT_FILE_EXTENSION)
-
-      if File.exist? path
-        begin
-          content = File.read path
+      profile_storage_key = Dial::Storage.profile_storage_key profile_key
+      begin
+        content = Dial::Storage.fetch profile_storage_key
+        if content
           [
             200,
             { "Content-Type" => "application/json", "Access-Control-Allow-Origin" => Dial::VERNIER_VIEWER_URL },
             [content]
           ]
-        rescue
+        else
           [
-            500,
+            404,
             { "Content-Type" => "text/plain" },
-            ["Internal Server Error"]
+            ["Not Found"]
           ]
         end
-      else
+      rescue
         [
-          404,
+          500,
           { "Content-Type" => "text/plain" },
-          ["Not Found"]
+          ["Internal Server Error"]
         ]
       end
     }
