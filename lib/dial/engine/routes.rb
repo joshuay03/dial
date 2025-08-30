@@ -4,7 +4,7 @@ Dial::Engine.routes.draw do
   scope path: "/dial", as: "dial" do
     get "profile", to: lambda { |env|
       uuid = env[::Rack::QUERY_STRING].sub "uuid=", ""
-      path = String ::Rails.root.join Dial::VERNIER_PROFILE_OUT_RELATIVE_DIRNAME, (uuid + VERNIER_PROFILE_OUT_FILE_EXTENSION)
+      path = String ::Rails.root.join Dial::VERNIER_PROFILE_OUT_RELATIVE_DIRNAME, (uuid + Dial::VERNIER_PROFILE_OUT_FILE_EXTENSION)
 
       if File.exist? path
         [

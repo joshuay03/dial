@@ -3,6 +3,7 @@
 - Add sampling configuration to control percentage of requests profiled
 - Replace response body buffering with streaming response wrapper
 - Make prosopite logging thread-safe with thread-local storage
+- Fix missing namespace for VERNIER_PROFILE_OUT_FILE_EXTENSION in engine routes
 
 ## [0.3.2] - 2025-05-14
 
