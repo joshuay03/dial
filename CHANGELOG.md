@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.4.0] - 2025-08-30
+
 - Add sampling configuration to control percentage of requests profiled
 - Replace response body buffering with streaming response wrapper
 - Make prosopite logging thread-safe with thread-local storage
