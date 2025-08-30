@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- Constantize sampling percentages and nonce fallback
+
 ## [0.4.0] - 2025-08-30
 
 - Add sampling configuration to control percentage of requests profiled
