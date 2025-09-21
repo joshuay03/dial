@@ -126,11 +126,6 @@ end
 | Storage Backends          | Redis, Memcached, File, Memory     | Redis, Memcached, File                                  |
 | Production Ready          | Yes                                | Yes                                                     |
 
-> [!NOTE]
-> SQL queries displayed in the profile are not annotated with the caller location by default. If you're not using the
-> [marginalia](https://github.com/basecamp/marginalia) gem to annotate your queries, you will need to extend your
-> application's [ActiveRecord QueryLogs](https://edgeapi.rubyonrails.org/classes/ActiveRecord/QueryLogs.html) yourself.
-
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `bundle exec rake test` to run the
