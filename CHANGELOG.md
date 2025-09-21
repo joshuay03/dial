@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.5.0] - 2025-09-21
+
 - Add storage interface with Redis cluster and Memcached adapters for distributed deployments
 
 ## [0.4.0] - 2025-08-30
