@@ -22,7 +22,8 @@ module Dial
         return @app.call env
       end
 
-      unless should_profile?
+      request = ::Rack::Request.new env
+      unless should_profile? request
         return @app.call env
       end
 
@@ -125,8 +126,12 @@ module Dial
       end
     end
 
-    def should_profile?
-      rand(100) < Dial._configuration.sampling_percentage
+    def should_profile? request
+      force_param = Dial._configuration.force_param
+      return true if request.params[force_param]
+
+      Dial._configuration.enabled &&
+        rand(100) < Dial._configuration.sampling_percentage
     end
   end
 

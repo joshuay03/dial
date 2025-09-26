@@ -41,9 +41,15 @@ mount Dial::Engine, at: "/"
 # config/initializers/dial.rb
 
 Dial.configure do |config|
-  config.sampling_percentage = 50
-  config.storage = Dial::Storage::RedisAdapter
-  config.storage_options = { client: Redis.new(url: ENV["REDIS_URL"]), ttl: 86400 }
+  config.enabled = !Rails.env.production? # disable by default in production, use force_param to enable per request
+  config.force_param = "profile" # override param name to force profiling
+  if Rails.env.staging?
+    config.sampling_percentage = 50 # override sampling percentage in staging for A/B testing profiler impact
+  end
+  unless Rails.env.development?
+    config.storage = Dial::Storage::RedisAdapter # use Redis storage in non-development environments
+    config.storage_options = { client: Redis.new(url: ENV["REDIS_URL"]), ttl: 86400 }
+  end
   config.vernier_interval = 100
   config.vernier_allocation_interval = 10_000
   config.prosopite_ignore_queries += [/pg_sleep/i]
@@ -54,9 +60,11 @@ end
 
 Option | Description | Default
 :- | :- | :-
+`enabled` | Whether profiling is enabled. | `true`
+`force_param` | Request parameter name to force profiling even when disabled. Always profiles (bypasses sampling). | `"dial_force"`
 `sampling_percentage` | Percentage of requests to profile. | `100` in development, `1` in production
-`storage` | Storage adapter class for profile data | `Dial::Storage::FileAdapter`
-`storage_options` | Options hash passed to storage adapter | `{ ttl: 3600 }`
+`storage` | Storage adapter class for profile data. | `Dial::Storage::FileAdapter`
+`storage_options` | Options hash passed to storage adapter. | `{ ttl: 3600 }`
 `content_security_policy_nonce` | Sets the content security policy nonce to use when inserting Dial's script. Can be a string, or a Proc which receives `env` and response `headers` as arguments and returns the nonce string. | Rails generated nonce or `nil`
 `vernier_interval` | Sets the `interval` option for vernier. | `200`
 `vernier_allocation_interval` | Sets the `allocation_interval` option for vernier. | `2_000`

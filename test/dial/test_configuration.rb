@@ -12,6 +12,8 @@ module Dial
 
     def test_configuration_has_default_values
       Dial.configure do |config|
+        assert_equal true, config.enabled
+        assert_equal FORCE_PARAM, config.force_param
         assert_equal 100, config.sampling_percentage
         assert_instance_of Proc, config.content_security_policy_nonce
         assert_equal VERNIER_INTERVAL, config.vernier_interval
@@ -24,17 +26,21 @@ module Dial
 
     def test_configuration_can_be_changed
       Dial.configure do |config|
+        config.enabled = false
+        config.force_param = "profile"
         config.sampling_percentage = 25
         config.content_security_policy_nonce = lambda { |_env, headers| headers["TEST_NONCE"] }
         config.vernier_interval = 50
         config.vernier_allocation_interval = 100
         config.prosopite_ignore_queries = [/only_ignore_me/]
 
+        assert_equal false, config.enabled
+        assert_equal "profile", config.force_param
         assert_equal 25, config.sampling_percentage
+        assert_equal "test_nonce", config.content_security_policy_nonce.call({}, { "TEST_NONCE" => "test_nonce" })
         assert_equal 50, config.vernier_interval
         assert_equal 100, config.vernier_allocation_interval
         assert_equal [/only_ignore_me/], config.prosopite_ignore_queries
-        assert_equal "test_nonce", config.content_security_policy_nonce.call({}, { "TEST_NONCE" => "test_nonce" })
       end
     end
   end
@@ -49,7 +55,10 @@ module Dial
     def test_configuration_can_be_changed
       config_initializer <<~RUBY
         Dial.configure do |config|
+          config.enabled = false
+          config.force_param = "profile"
           config.sampling_percentage = 25
+          config.content_security_policy_nonce = lambda { |_env, headers| headers["TEST_NONCE"] }
           config.vernier_interval = 50
           config.vernier_allocation_interval = 100
           config.prosopite_ignore_queries = [/only_ignore_me/]
@@ -57,7 +66,10 @@ module Dial
       RUBY
       app(true).initialize!
 
+      assert_equal false, Dial._configuration.enabled
+      assert_equal "profile", Dial._configuration.force_param
       assert_equal 25, Dial._configuration.sampling_percentage
+      assert_equal "test_nonce", Dial._configuration.content_security_policy_nonce.call({}, { "TEST_NONCE" => "test_nonce" })
       assert_equal 50, Dial._configuration.vernier_interval
       assert_equal 100, Dial._configuration.vernier_allocation_interval
       assert_equal [/only_ignore_me/], Dial._configuration.prosopite_ignore_queries

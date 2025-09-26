@@ -12,8 +12,10 @@ module Dial
   class Configuration
     def initialize
       @options = {
-        sampling_percentage: default_sampling_percentage,
-        storage: default_storage,
+        enabled: true,
+        force_param: FORCE_PARAM,
+        sampling_percentage: ::Rails.env.development? ? SAMPLING_PERCENTAGE_DEV : SAMPLING_PERCENTAGE_PROD,
+        storage: Storage::FileAdapter,
         storage_options: { ttl: STORAGE_TTL },
         content_security_policy_nonce: -> env, _headers { env[NONCE] || EMPTY_NONCE },
         vernier_interval: VERNIER_INTERVAL,
@@ -36,16 +38,6 @@ module Dial
       @options.freeze
 
       super
-    end
-
-    private
-
-    def default_sampling_percentage
-      ::Rails.env.development? ? SAMPLING_PERCENTAGE_DEV : SAMPLING_PERCENTAGE_PROD
-    end
-
-    def default_storage
-      Storage::FileAdapter
     end
   end
 end
