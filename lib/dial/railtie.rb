@@ -10,9 +10,6 @@ require_relative "prosopite_logger"
 module Dial
   class Railtie < ::Rails::Railtie
     initializer "dial.setup", after: :load_config_initializers do |app|
-      # clean up stale storage data
-      Storage.cleanup
-
       app.config.after_initialize do
         # set up prosopite
         if ::ActiveRecord::Base.configurations.configurations.any? { |config| config.adapter == "postgresql" }
