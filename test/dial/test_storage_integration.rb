@@ -14,12 +14,6 @@ module Dial
         "PATH_INFO" => "/test",
         "HTTP_HOST" => "example.com"
       }
-      Storage.instance_variable_set :@adapter, nil
-    end
-
-    def teardown
-      super
-      Storage.instance_variable_set :@adapter, nil
     end
 
     def test_file_storage_integration
@@ -81,9 +75,11 @@ module Dial
       new_config = original_config.merge(options).merge(sampling_percentage: 100)
 
       Dial._configuration.instance_variable_set :@options, new_config
+      Storage.instance_variable_set :@adapter, nil
       yield
     ensure
       Dial._configuration.instance_variable_set :@options, original_config
+      Storage.instance_variable_set :@adapter, nil
     end
 
     class MockRedisClient
