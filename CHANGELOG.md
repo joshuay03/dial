@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.5.1] - 2025-09-27
+
 - Don't clean up stale storage data in railtie
 - Add enabled configuration option and force parameter for per-request profiling
 
