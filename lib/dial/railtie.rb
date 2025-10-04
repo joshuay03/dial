@@ -15,7 +15,7 @@ module Dial
         if ::ActiveRecord::Base.configurations.configurations.any? { |config| config.adapter == "postgresql" }
           require "pg_query"
         end
-        ::Prosopite.custom_logger = ProsopiteLogger.new
+        ::Prosopite.dial_logger = ProsopiteLogger.new
 
         # finalize configuration
         Dial._configuration.freeze

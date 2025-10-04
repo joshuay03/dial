@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+-  Preserve existing prosopite custom loggers
+
 ## [0.5.1] - 2025-09-27
 
 - Don't clean up stale storage data in railtie
