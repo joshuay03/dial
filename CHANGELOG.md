@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.5.2] - 2025-10-04
+
 -  Preserve existing prosopite custom loggers
 
 ## [0.5.1] - 2025-09-27
