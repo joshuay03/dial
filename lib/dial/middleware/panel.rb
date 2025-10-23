@@ -71,6 +71,8 @@ module Dial
             </div>
           </div>
 
+          <div id="dial-hidden-indicator">Dial</div>
+
           <script nonce="#{configured_nonce env, headers}">
             #{script}
           </script>
@@ -149,18 +151,79 @@ module Dial
               color: black;
             }
           }
+
+          #dial-hidden-indicator {
+            all: initial;
+            position: fixed;
+            bottom: 0.5rem;
+            right: 0.5rem;
+            z-index: 9999;
+            background-color: white;
+            color: black;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            display: none;
+            box-shadow: -0.2rem -0.2rem 0.4rem rgba(0, 0, 0, 0.5);
+          }
         CSS
       end
 
       def script
+        shortcut_keys = Dial._configuration.toggle_shortcut_keys
+
         <<~JS
+          var dialPanel = document.getElementById("dial");
           var dialPreview = document.getElementById("dial-preview");
           var dialDetails = document.getElementById("dial-details");
+          var dialHiddenIndicator = document.getElementById("dial-hidden-indicator");
+
+          function getDialHiddenState() {
+            var stored = localStorage.getItem("dial_panel_hidden");
+            if (!stored) return false;
+
+            try {
+              var data = JSON.parse(stored);
+              var expiresAt = new Date(data.expiresAt);
+              if (new Date() > expiresAt) {
+                localStorage.removeItem("dial_panel_hidden");
+                return false;
+              }
+              return data.hidden;
+            } catch (e) {
+              localStorage.removeItem("dial_panel_hidden");
+              return false;
+            }
+          }
+
+          function setDialHiddenState(hidden) {
+            var expiresAt = new Date();
+            expiresAt.setTime(expiresAt.getTime() + (24 * 60 * 60 * 1000));
+            localStorage.setItem("dial_panel_hidden", JSON.stringify({
+              hidden: hidden,
+              expiresAt: expiresAt.toISOString()
+            }));
+          }
+
+          function toggleDialPanel() {
+            var isHidden = dialPanel.style.display === "none";
+            dialPanel.style.display = isHidden ? "flex" : "none";
+            dialHiddenIndicator.style.display = isHidden ? "none" : "block";
+            setDialHiddenState(!isHidden);
+          }
+
+          if (getDialHiddenState()) {
+            dialPanel.style.display = "none";
+            dialHiddenIndicator.style.display = "block";
+          }
 
           dialPreview.addEventListener("click", () => {
             var isCollapsed = ["", "none"].includes(dialDetails.style.display);
             dialDetails.style.display = isCollapsed ? "block" : "none";
           });
+
+          dialHiddenIndicator.addEventListener("click", toggleDialPanel);
 
           document.addEventListener("click", (event) => {
             if (!dialPreview.contains(event.target) && !dialDetails.contains(event.target)) {
@@ -170,6 +233,26 @@ module Dial
               detailsElements.forEach(detail => {
                 detail.removeAttribute("open");
               });
+            }
+          });
+
+          document.addEventListener("keydown", (event) => {
+            var keys = #{shortcut_keys.to_json};
+            var expectedKey = keys[keys.length - 1].toLowerCase();
+            var keyPressed = event.code.toLowerCase() === "key" + expectedKey || event.key.toLowerCase() === expectedKey;
+            var modifiersMatch = true;
+
+            for (var i = 0; i < keys.length - 1; i++) {
+              var modifier = keys[i].toLowerCase();
+              if (modifier === "alt" && !event.altKey) modifiersMatch = false;
+              if (modifier === "ctrl" && !event.ctrlKey) modifiersMatch = false;
+              if (modifier === "shift" && !event.shiftKey) modifiersMatch = false;
+              if (modifier === "meta" && !event.metaKey) modifiersMatch = false;
+            }
+
+            if (keyPressed && modifiersMatch) {
+              event.preventDefault();
+              toggleDialPanel();
             }
           });
         JS

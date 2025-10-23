@@ -66,6 +66,7 @@ Option | Description | Default
 `storage` | Storage adapter class for profile data. | `Dial::Storage::FileAdapter`
 `storage_options` | Options hash passed to storage adapter. | `{ ttl: 3600 }`
 `content_security_policy_nonce` | Sets the content security policy nonce to use when inserting Dial's script. Can be a string, or a Proc which receives `env` and response `headers` as arguments and returns the nonce string. | Rails generated nonce or `nil`
+`toggle_shortcut_keys` | Array of keys for keyboard shortcut to toggle panel visibility. | `["Alt", "Shift", "D"]`
 `vernier_interval` | Sets the `interval` option for vernier. | `200`
 `vernier_allocation_interval` | Sets the `allocation_interval` option for vernier. | `2_000`
 `prosopite_ignore_queries` | Sets the `ignore_queries` option for prosopite. | `[/schema_migrations/i]`

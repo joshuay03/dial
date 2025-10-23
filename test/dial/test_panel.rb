@@ -107,5 +107,13 @@ module Dial
         assert_select "span", text: /slot_size: \d+/
       end
     end
+
+    def test_hidden_indicator
+      assert_select "#dial-hidden-indicator", text: "Dial"
+    end
+
+    def test_toggle_shortcut_keys_script
+      assert_select "script", text: /var keys = \["Alt","Shift","D"\];/
+    end
   end
 end

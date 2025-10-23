@@ -18,6 +18,7 @@ module Dial
         storage: Storage::FileAdapter,
         storage_options: { ttl: STORAGE_TTL },
         content_security_policy_nonce: -> env, _headers { env[NONCE] || EMPTY_NONCE },
+        toggle_shortcut_keys: TOGGLE_SHORTCUT_KEYS,
         vernier_interval: VERNIER_INTERVAL,
         vernier_allocation_interval: VERNIER_ALLOCATION_INTERVAL,
         prosopite_ignore_queries: PROSOPITE_IGNORE_QUERIES,

@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- Add keyboard shortcut to toggle panel visibility
+
 ## [0.5.2] - 2025-10-04
 
 -  Preserve existing prosopite custom loggers
