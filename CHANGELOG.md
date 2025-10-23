@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.6.0] - 2025-10-23
+
 - Stop suffixing mounted routes with 'dial/'
 - Add keyboard shortcut to toggle panel visibility
 
