@@ -32,7 +32,7 @@ bundle install
 
 ```ruby
 # this will mount the engine at /dial
-mount Dial::Engine, at: "/"
+mount Dial::Engine, at: "/dial"
 ```
 
 4. (Optional) Configure the gem in an initializer:
