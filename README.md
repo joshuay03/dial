@@ -1,7 +1,7 @@
 # Dial
 
 ![Version](https://img.shields.io/gem/v/dial)
-![Build](https://img.shields.io/github/actions/workflow/status/joshuay03/dial/.github/workflows/main.yml?branch=main)
+![Build](https://badge.buildkite.com/2d2624def2501dd6dd7e1959de0bca4f3f6749afc67a94938b.svg)
 
 A modern profiler for your Rails application.
 

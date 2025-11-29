@@ -1,0 +1,74 @@
+steps:
+  - label: ":ruby: Ruby 3.3 - Rails {{matrix.rails}}"
+    key: "ruby-3-3"
+    image: "ruby:3.3"
+    matrix:
+      setup:
+        rails:
+          - "7.1"
+          - "7.2"
+          - "8.0"
+          - "8.1"
+    commands:
+      - docker compose -f docker-compose.storage.yml up -d
+      - docker compose -f docker-compose.storage.yml wait redis-cluster-init
+      - bundle install
+      - bundle exec rake
+    env:
+      RAILS_VERSION: "{{matrix.rails}}"
+      RAILS_ENV: development
+      REDIS_URL: redis://localhost:6379
+      REDIS_CLUSTER_NODE_1: redis://localhost:8000
+      REDIS_CLUSTER_NODE_2: redis://localhost:8001
+      REDIS_CLUSTER_NODE_3: redis://localhost:8002
+      MEMCACHED_URL: localhost:11211
+
+  - label: ":ruby: Ruby 3.4 - Rails {{matrix.rails}}"
+    key: "ruby-3-4"
+    image: "ruby:3.4"
+    matrix:
+      setup:
+        rails:
+          - "7.1"
+          - "7.2"
+          - "8.0"
+          - "8.1"
+    commands:
+      - docker compose -f docker-compose.storage.yml up -d
+      - docker compose -f docker-compose.storage.yml wait redis-cluster-init
+      - bundle install
+      - bundle exec rake
+    env:
+      RAILS_VERSION: "{{matrix.rails}}"
+      RAILS_ENV: development
+      REDIS_URL: redis://localhost:6379
+      REDIS_CLUSTER_NODE_1: redis://localhost:8000
+      REDIS_CLUSTER_NODE_2: redis://localhost:8001
+      REDIS_CLUSTER_NODE_3: redis://localhost:8002
+      MEMCACHED_URL: localhost:11211
+
+  - label: ":ruby: Ruby head - Rails {{matrix.rails}}"
+    key: "ruby-head"
+    image: "rubylang/ruby:master-dev"
+    matrix:
+      setup:
+        rails:
+          - "7.1"
+          - "7.2"
+          - "8.0"
+          - "8.1"
+    commands:
+      - docker compose -f docker-compose.storage.yml up -d
+      - docker compose -f docker-compose.storage.yml wait redis-cluster-init
+      - apt-get update && apt-get install -y libyaml-dev
+      - bundle install
+      - bundle exec rake
+    env:
+      RAILS_VERSION: "{{matrix.rails}}"
+      RAILS_ENV: development
+      REDIS_URL: redis://localhost:6379
+      REDIS_CLUSTER_NODE_1: redis://localhost:8000
+      REDIS_CLUSTER_NODE_2: redis://localhost:8001
+      REDIS_CLUSTER_NODE_3: redis://localhost:8002
+      MEMCACHED_URL: localhost:11211
+    soft_fail: true
