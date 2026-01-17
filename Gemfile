@@ -7,6 +7,7 @@ gemspec
 gem "rake"
 
 gem "minitest"
+gem "minitest-mock"
 
 gem "debug"
 
