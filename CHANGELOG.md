@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.6.1] - 2026-11-12
+
 - Fix prosopite notification parsing and grouping
 
 ## [0.6.0] - 2025-10-23
