@@ -79,6 +79,119 @@ module Dial
       end
     end
 
+    def test_n_plus_ones_with_possible_fix_and_context
+      ProsopiteLogger.log_io.write <<~LOG
+        N+1 queries detected (2 queries, 1.0ms):
+          SELECT widgets WHERE id = 1
+          SELECT widgets WHERE id = 2
+        Possible fix:
+          Widget.includes(:owner)
+        Context:
+          Loading widgets
+
+          for the dashboard
+        Call stack:
+          app/example.rb:1
+
+      LOG
+
+      get "/", nil, { "HTTP_ACCEPT" => "text/html" }
+
+      assert last_response.ok?
+      assert_select "#dial-details-n-plus-ones details", text: /SELECT widgets/ do
+        assert_select "summary", text: "SELECT widgets WHERE id = 1"
+        assert_select "span", text: "+ 1 more queries"
+        assert_select "span", text: "Possible fix:"
+        assert_select "span", text: "Widget.includes(:owner)"
+        assert_select "span", text: "Context:"
+        assert_select "span", text: "Loading widgets"
+        assert_select "span", text: "for the dashboard"
+        assert_select "span", text: "app/example.rb:1"
+      end
+    end
+
+    def test_n_plus_ones_with_possible_fixes
+      ProsopiteLogger.log_io.write <<~LOG
+        N+1 queries detected (2 queries, 1.0ms):
+          SELECT widgets WHERE id = 1
+          SELECT widgets WHERE id = 2
+        Possible fixes:
+          Widget.includes(:owner)
+          Widget.preload(:owner)
+        Call stack:
+          app/example.rb:1
+
+      LOG
+
+      get "/", nil, { "HTTP_ACCEPT" => "text/html" }
+
+      assert last_response.ok?
+      assert_select "#dial-details-n-plus-ones details", text: /SELECT widgets/ do
+        assert_select "summary", text: "SELECT widgets WHERE id = 1"
+        assert_select "span", text: "+ 1 more queries"
+        assert_select "span", text: "Possible fixes:"
+        assert_select "span", text: "Widget.includes(:owner)"
+        assert_select "span", text: "Widget.preload(:owner)"
+        assert_select "span", text: "app/example.rb:1"
+      end
+    end
+
+    def test_n_plus_ones_with_context
+      ProsopiteLogger.log_io.write <<~LOG
+        N+1 queries detected (2 queries, 1.0ms):
+          SELECT widgets WHERE id = 1
+          SELECT widgets WHERE id = 2
+        Context:
+          Loading widgets
+          for the dashboard
+        Call stack:
+          app/example.rb:1
+
+      LOG
+
+      get "/", nil, { "HTTP_ACCEPT" => "text/html" }
+
+      assert last_response.ok?
+      assert_select "#dial-details-n-plus-ones details", text: /SELECT widgets/ do
+        assert_select "summary", text: "SELECT widgets WHERE id = 1"
+        assert_select "span", text: "+ 1 more queries"
+        assert_select "span", text: "Context:"
+        assert_select "span", text: "Loading widgets"
+        assert_select "span", text: "for the dashboard"
+        assert_select "span", text: "app/example.rb:1"
+      end
+    end
+
+    def test_n_plus_ones_with_html
+      ProsopiteLogger.log_io.write <<~LOG
+        N+1 queries detected (2 queries, 1.0ms):
+          SELECT widgets WHERE name = '<widget>' AND owner = 'A&B'
+          SELECT widgets WHERE name = '<other>' AND owner = 'A&B'
+        Possible fix:
+          Widget.where("name < ?", "<widget>").includes(:owner)
+        Context:
+          Loading <widgets> & owners
+          <img src=x onerror=alert(1)>
+        Call stack:
+          app/<widgets>&owners.rb:1
+
+      LOG
+
+      get "/", nil, { "HTTP_ACCEPT" => "text/html" }
+
+      assert last_response.ok?
+      assert_select "#dial-details-n-plus-ones details", text: /SELECT widgets/ do
+        assert_select "summary", text: "SELECT widgets WHERE name = '<widget>' AND owner = 'A&B'"
+        assert_select "span", text: "SELECT widgets WHERE name = '<widget>' AND owner = 'A&B'"
+        assert_select "span", text: "+ 1 more queries"
+        assert_select "span", text: 'Widget.where("name < ?", "<widget>").includes(:owner)'
+        assert_select "span", text: "Loading <widgets> & owners"
+        assert_select "span", text: "<img src=x onerror=alert(1)>"
+        assert_select "span", text: "app/<widgets>&owners.rb:1"
+        assert_select "img, widget, widgets", false
+      end
+    end
+
     def test_server_timing
       assert_select "#dial-details-server-timing" do
         assert_select "summary", text: "Server timing"

@@ -71,14 +71,38 @@ module Dial
       dial_logger = ProsopiteLogger.new
       ::Prosopite.dial_logger = dial_logger
 
-      Thread.current[:prosopite_notifications] = {
-        ["SELECT * FROM users"] => ["app/controllers/users_controller.rb:10"]
-      }
+      ::Prosopite.scan do
+        Thread.current[:prosopite_notifications] = {
+          ["SELECT * FROM users"] => { kaller: ["app/controllers/users_controller.rb:10"], duration_ms: 1.0 }
+        }
 
-      ::Prosopite.send :send_notifications
+        ::Prosopite.send :send_notifications
+      end
 
       assert_includes existing_io.string, "N+1 queries detected"
       assert_includes ProsopiteLogger.log_io.string, "N+1 queries detected"
+    end
+
+    def test_equal_normalized_queries_preserve_separate_notifications
+      log_io = StringIO.new
+      ::Prosopite.custom_logger = Logger.new log_io
+
+      ::Prosopite.scan do
+        notifications = {}.compare_by_identity
+        ["app/first.rb:10", "app/second.rb:20"].each do |frame|
+          notifications[["SELECT  *\nFROM users", "SELECT * FROM users"]] = {
+            kaller: [frame], duration_ms: 1.0
+          }
+        end
+        Thread.current[:prosopite_notifications] = notifications
+
+        ::Prosopite.send :send_notifications
+      end
+
+      assert_equal 2, log_io.string.scan("N+1 queries detected").size
+      assert_equal 4, log_io.string.scan("  SELECT * FROM users\n").size
+      assert_includes log_io.string, "app/first.rb:10"
+      assert_includes log_io.string, "app/second.rb:20"
     end
 
     def test_setting_same_logger_twice_does_not_create_nested_composite

@@ -307,10 +307,10 @@ module Dial
           query_logs.map do |(queries, stack_lines)|
             <<~HTML
               <details>
-                <summary>#{truncated_query queries.first}</summary>
+                <summary>#{Util.escape_html(truncated_query queries.first)}</summary>
                 <div class="section query-logs">
-                  #{queries.map { |query| "<span>#{query}</span>" }.join}
-                  #{stack_lines.map { |stack_line| "<span>#{stack_line}</span>" }.join}
+                  #{queries.map { |query| "<span>#{Util.escape_html query}</span>" }.join}
+                  #{stack_lines.map { |stack_line| "<span>#{Util.escape_html stack_line}</span>" }.join}
                 </div>
               </details>
             HTML

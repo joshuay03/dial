@@ -106,7 +106,10 @@ module Dial
       case line
       when /N\+1 queries detected/
         [[[],[]], :queries, 0]
-      when /Call stack/
+      when /\A(?:Possible fix(?:es)?:|Context:)\s*\z/
+        entry.last << line.strip
+        [entry, :details, count]
+      when /\ACall stack:\s*\z/
         entry.first << "+ #{count - 1} more queries" if count > 1
         [entry, :call_stack, count]
       else
@@ -115,6 +118,9 @@ module Dial
           count += 1
           entry.first << line.strip if count == 1
           [entry, :queries, count]
+        when :details
+          entry.last << line.strip unless line.strip.empty?
+          [entry, section, count]
         when :call_stack
           if line.strip.empty?
             [entry, nil, count]

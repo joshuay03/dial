@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- Fix prosopite notification parsing and grouping
+
 ## [0.6.0] - 2025-10-23
 
 - Stop suffixing mounted routes with 'dial/'

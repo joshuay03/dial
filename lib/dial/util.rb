@@ -1,10 +1,15 @@
 # frozen_string_literal: true
 
+require "rack/utils"
 require "securerandom"
 
 module Dial
   module Util
     class << self
+      def escape_html text
+        ::Rack::Utils.escape_html text
+      end
+
       def uuid
         SecureRandom.uuid_v7
       end

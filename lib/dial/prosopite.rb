@@ -32,8 +32,8 @@ module Dial
     end
 
     def send_notifications
-      tc[:prosopite_notifications] = tc[:prosopite_notifications].to_h do |queries, kaller|
-        [queries.map { |query| query.squish }, kaller]
+      tc[:prosopite_notifications] = tc[:prosopite_notifications].each_with_object({}.compare_by_identity) do |(queries, kaller), notifications|
+        notifications[queries.map { |query| query.squish }] = kaller
       end
 
       super
