@@ -34,28 +34,3 @@ Minitest.after_run do
   FileUtils.rm_rf Rails.root.join "log"
   FileUtils.rm_rf Rails.root.join "tmp"
 end
-
-module Prosopite
-  class << self
-    # monkey patch sqlite fingerprinting
-    def fingerprint query
-      conn = if ActiveRecord::Base.respond_to? :lease_connection
-               ActiveRecord::Base.lease_connection
-             else
-               ActiveRecord::Base.connection
-             end
-      db_adapter = conn.adapter_name.downcase
-      if db_adapter.include?("mysql") || db_adapter.include?("trilogy") || db_adapter.include?("sqlite")
-        mysql_fingerprint query
-      else
-        begin
-          require "pg_query"
-        rescue LoadError => e
-          msg = "Could not load the 'pg_query' gem. Add `gem 'pg_query'` to your Gemfile"
-          raise LoadError, msg, e.backtrace
-        end
-        PgQuery.fingerprint query
-      end
-    end
-  end
-end
