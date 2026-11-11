@@ -29,9 +29,16 @@ module Dial
         end
       end
 
+      @existing_threads = Thread.list
       get "/", nil, { "HTTP_ACCEPT" => "text/html" }
 
       assert last_response.ok?
+    end
+
+    def teardown
+      (Thread.list - @existing_threads).each(&:join)
+
+      super
     end
 
     def test_controller
